@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { loadLlmConfig, saveLlmConfig, type LlmConfig } from "./ai";
 
 interface SettingsProps {
   onClose: () => void;
+  onDirChange?: () => void;
 }
 
 interface EditorConfig {
@@ -44,10 +46,19 @@ const providers = [
   { value: "ollama" as const, label: "Ollama (本地)", defaultUrl: "http://localhost:11434/v1", defaultModel: "qwen2.5:14b" },
 ];
 
-export function Settings({ onClose }: SettingsProps) {
-  const [activeTab, setActiveTab] = useState<"llm" | "editor">("llm");
+export function Settings({ onClose, onDirChange }: SettingsProps) {
+  const [activeTab, setActiveTab] = useState<"llm" | "editor" | "storage">("llm");
   const [llmConfig, setLlmConfig] = useState<LlmConfig>(loadLlmConfig());
   const [editorConfig, setEditorConfig] = useState<EditorConfig>(loadEditorConfig());
+  const [storageDir, setStorageDir] = useState("");
+  const [dirChanged, setDirChanged] = useState(false);
+
+  // 获取当前存储目录
+  useEffect(() => {
+    invoke<string>("get_notes_dir")
+      .then(setStorageDir)
+      .catch(() => setStorageDir(""));
+  }, []);
 
   useEffect(() => {
     saveEditorConfig(editorConfig);
@@ -64,12 +75,20 @@ export function Settings({ onClose }: SettingsProps) {
     }));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     saveLlmConfig(llmConfig);
+    if (dirChanged && storageDir.trim()) {
+      try {
+        await invoke("set_notes_dir", { path: storageDir.trim() });
+      } catch (e) {
+        console.error("设置目录失败:", e);
+      }
+    }
+    if (dirChanged) onDirChange?.();
     onClose();
   };
 
-  const tabButton = (value: "llm" | "editor", label: string) => (
+  const tabButton = (value: "llm" | "editor" | "storage", label: string) => (
     <button
       onClick={() => setActiveTab(value)}
       style={{
@@ -196,11 +215,29 @@ export function Settings({ onClose }: SettingsProps) {
         >
           {tabButton("llm", "LLM 配置")}
           {tabButton("editor", "编辑器")}
+          {tabButton("storage", "存储")}
         </div>
 
         {/* 内容 */}
         <div style={{ padding: "20px 24px", maxHeight: 320, overflowY: "auto" }}>
-          {activeTab === "llm" ? (
+          {activeTab === "storage" ? (
+            <div>
+              <label style={labelStyle}>笔记存储目录</label>
+              <input
+                type="text"
+                value={storageDir}
+                onChange={(e) => {
+                  setStorageDir(e.target.value);
+                  setDirChanged(true);
+                }}
+                placeholder="~/Notebook"
+                style={inputStyle}
+              />
+              <p style={{ fontSize: 12, color: "#9ca3af", margin: "6px 0 0" }}>
+                修改后保存，笔记列表将重新加载
+              </p>
+            </div>
+          ) : activeTab === "llm" ? (
             <>
               {/* Provider */}
               <div style={sectionStyle}>

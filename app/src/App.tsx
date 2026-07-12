@@ -323,7 +323,15 @@ function App() {
       </div>
 
       {/* 设置弹窗 */}
-      {showSettings && <Settings onClose={() => setShowSettings(false)} />}
+      {showSettings && (
+        <Settings
+          onClose={() => setShowSettings(false)}
+          onDirChange={() => {
+            setCurrentNote(null);
+            refreshNotes();
+          }}
+        />
+      )}
     </div>
   );
 }

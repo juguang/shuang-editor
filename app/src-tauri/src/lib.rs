@@ -3,14 +3,79 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use chrono::Local;
 
+// ── 配置管理 ──
+
+#[derive(Serialize, Deserialize)]
+struct AppConfig {
+    notes_dir: Option<String>,
+}
+
+fn config_path() -> PathBuf {
+    let home = dirs::home_dir().expect("无法获取home目录");
+    home.join(".notebook").join("config.json")
+}
+
+fn read_config() -> AppConfig {
+    let path = config_path();
+    if path.exists() {
+        fs::read_to_string(&path)
+            .ok()
+            .and_then(|s| serde_json::from_str(&s).ok())
+            .unwrap_or(AppConfig { notes_dir: None })
+    } else {
+        AppConfig { notes_dir: None }
+    }
+}
+
+fn save_config(config: &AppConfig) -> Result<(), String> {
+    let path = config_path();
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let json = serde_json::to_string_pretty(config).map_err(|e| e.to_string())?;
+    fs::write(&path, json).map_err(|e| e.to_string())
+}
+
 /// 获取笔记存储目录
 fn notes_dir() -> PathBuf {
-    let home = dirs::home_dir().expect("无法获取home目录");
-    let dir = home.join("Notebook");
-    if !dir.exists() {
-        fs::create_dir_all(&dir).expect("无法创建Notebook目录");
+    let config = read_config();
+    if let Some(dir) = config.notes_dir.as_deref().filter(|d| !d.is_empty()) {
+        let path = PathBuf::from(dir);
+        if !path.exists() {
+            fs::create_dir_all(&path).expect("无法创建笔记目录");
+        }
+        path
+    } else {
+        let home = dirs::home_dir().expect("无法获取home目录");
+        let dir = home.join("Notebook");
+        if !dir.exists() {
+            fs::create_dir_all(&dir).expect("无法创建Notebook目录");
+        }
+        dir
     }
-    dir
+}
+
+#[tauri::command]
+fn get_notes_dir() -> Result<String, String> {
+    let path = notes_dir();
+    Ok(path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+fn set_notes_dir(path: String) -> Result<(), String> {
+    if path.trim().is_empty() {
+        return Err("路径不能为空".to_string());
+    }
+    let config = AppConfig {
+        notes_dir: Some(path.trim().to_string()),
+    };
+    save_config(&config)?;
+    // 确保目录存在
+    let dir = notes_dir();
+    if !dir.exists() {
+        fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -403,6 +468,8 @@ pub fn run() {
             delete_note,
             search_notes,
             get_all_titles,
+            get_notes_dir,
+            set_notes_dir,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
