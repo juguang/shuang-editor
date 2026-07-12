@@ -28,6 +28,7 @@ interface EditorProps {
   formatAllSignal: number;
   onUpdate: (html: string) => void;
   onStatusChange: (status: AiStatus) => void;
+  onOpenNote: (id: string) => void;
 }
 
 export function Editor({
@@ -37,6 +38,7 @@ export function Editor({
   formatAllSignal,
   onUpdate,
   onStatusChange,
+  onOpenNote,
 }: EditorProps) {
   const editor = useEditor({
     extensions: [
@@ -44,7 +46,7 @@ export function Editor({
         heading: { levels: [1, 2, 3] },
       }),
       Link.configure({
-        openOnClick: true,
+        openOnClick: false,
         HTMLAttributes: { class: "wiki-link" },
       }),
       Placeholder.configure({
@@ -61,6 +63,18 @@ export function Editor({
         class: "",
         style:
           "padding: 32px 48px; min-height: calc(100vh - 120px); box-sizing: border-box; outline: none; border: none;",
+      },
+      handleClickOn: (_view, _pos, _node, _nodePos, event) => {
+        const target = event.target as HTMLElement;
+        const anchor = target.closest("a");
+        if (anchor) {
+          const href = anchor.getAttribute("href") ?? "";
+          if (href.startsWith("note://")) {
+            onOpenNote(href.slice("note://".length));
+            return true;
+          }
+        }
+        return false;
       },
     },
   });

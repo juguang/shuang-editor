@@ -143,9 +143,15 @@ function App() {
         const otherTitles = titles.filter(([_, id]) => id !== currentNote.id);
         if (otherTitles.length > 0) {
           const links = await autoLink(content, otherTitles, config);
+          const titleToId = new Map(otherTitles.map(([t, id]) => [t, id]));
           for (const link of links) {
+            const targetId = titleToId.get(link.title);
+            if (!targetId) continue;
             const escaped = link.text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            content = content.replace(new RegExp(escaped, "g"), `[[${link.text}]]`);
+            // 避免重复包裹已是链接的文本
+            const re = new RegExp(`(?<!href="note://[^"]*">)${escaped}`, "g");
+            const replacement = `<a href="note://${targetId}" class="wiki-link">${link.text}</a>`;
+            content = content.replace(re, replacement);
           }
         }
       } catch (e) {
@@ -290,6 +296,7 @@ function App() {
                     setCurrentNote({ ...currentNote, content: html });
                   }}
                   onStatusChange={setAiStatus}
+                  onOpenNote={handleOpenNote}
                 />
               </div>
               <StatusBar
