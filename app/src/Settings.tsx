@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
 import { loadLlmConfig, saveLlmConfig, type LlmConfig } from "./ai";
 
 interface SettingsProps {
@@ -223,16 +224,53 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
           {activeTab === "storage" ? (
             <div>
               <label style={labelStyle}>笔记存储目录</label>
-              <input
-                type="text"
-                value={storageDir}
-                onChange={(e) => {
-                  setStorageDir(e.target.value);
-                  setDirChanged(true);
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "center",
                 }}
-                placeholder="~/Notebook"
-                style={inputStyle}
-              />
+              >
+                <span
+                  style={{
+                    flex: 1,
+                    padding: "10px 14px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: 10,
+                    fontSize: 13,
+                    background: "#f9fafb",
+                    color: "#374151",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {storageDir || "~/Notebook"}
+                </span>
+                <button
+                  onClick={async () => {
+                    const dir = await open({ directory: true, multiple: false, title: "选择笔记目录" });
+                    if (dir) {
+                      // open 返回路径字符串（不含 file:// 前缀）
+                      const path = typeof dir === "string" ? dir : dir;
+                      setStorageDir(path);
+                      setDirChanged(true);
+                    }
+                  }}
+                  style={{
+                    padding: "10px 16px",
+                    background: "#111",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 10,
+                    fontSize: 13,
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  选择...
+                </button>
+              </div>
               <p style={{ fontSize: 12, color: "#9ca3af", margin: "6px 0 0" }}>
                 修改后保存，笔记列表将重新加载
               </p>
