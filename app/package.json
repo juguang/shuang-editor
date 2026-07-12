@@ -20,6 +20,7 @@
     "@tiptap/extension-placeholder": "^3.27.3",
     "@tiptap/react": "^3.27.3",
     "@tiptap/starter-kit": "^3.27.3",
+    "prosemirror-completion": "^0.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "remark": "^15.0.1",

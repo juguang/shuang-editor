@@ -1,11 +1,20 @@
+type WriteMode = "suggest" | "format" | "off";
+
 interface TitleBarProps {
   aiStatus: "idle" | "formatting" | "linking";
+  mode: WriteMode;
   isDark: boolean;
   onToggleDark: () => void;
   onOpenSettings: () => void;
 }
 
-export function TitleBar({ aiStatus, isDark, onToggleDark, onOpenSettings }: TitleBarProps) {
+const modeLabel: Record<WriteMode, string> = {
+  suggest: "● 续写",
+  format: "● 整理",
+  off: "○ 已关闭",
+};
+
+export function TitleBar({ aiStatus, mode, isDark, onToggleDark, onOpenSettings }: TitleBarProps) {
   return (
     <header
       style={{
@@ -25,14 +34,14 @@ export function TitleBar({ aiStatus, isDark, onToggleDark, onOpenSettings }: Tit
         <span
           style={{
             fontSize: 12,
-            color: aiStatus !== "idle" ? "#3b82f6" : "#6b7280",
-            background: aiStatus !== "idle" ? "#eff6ff" : "#f3f4f6",
+            color: mode === "off" ? "#9ca3af" : "#6b7280",
+            background: "#f3f4f6",
             padding: "2px 8px",
             borderRadius: 4,
             marginLeft: 8,
           }}
         >
-          AI 已开启
+          {modeLabel[mode]}
         </span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 
 interface Folder {
   id: string;
@@ -26,16 +27,38 @@ interface FolderTreeProps {
   selectedFolder: string | null;
   notes: NoteSummary[];
   currentNoteId: string | null;
+  searchQuery: string;
   onSelectFolder: (id: string | null) => void;
   onSelectNote: (id: string) => void;
   onDeleteNote: (id: string) => void;
   onNewFolder: () => void;
 }
 
+/** 高亮搜索关键词 */
+function highlight(text: string, query: string): ReactNode {
+  const q = query.trim();
+  if (!q) return text;
+  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const parts = text.split(new RegExp(`(${escaped})`, "gi"));
+  return parts.map((part, i) =>
+    part.toLowerCase() === q.toLowerCase() ? (
+      <mark
+        key={i}
+        style={{ background: "#fde68a", color: "#92400e", padding: "0 1px", borderRadius: 2 }}
+      >
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
+}
+
 export function FolderTree({
   selectedFolder,
   notes,
   currentNoteId,
+  searchQuery,
   onSelectFolder,
   onSelectNote,
   onDeleteNote,
@@ -81,11 +104,14 @@ export function FolderTree({
     return getFolderNotes(folderId).length;
   };
 
+  const isSearching = searchQuery.trim().length > 0;
+
   return (
     <div style={{ padding: "8px 12px", fontSize: 13, color: "#374151", flex: 1, overflowY: "auto" }}>
       {folders.map((folder) => {
         const folderNotes = getFolderNotes(folder.id);
         const noteCount = getFolderNoteCount(folder.id);
+        const showExpanded = isSearching ? folderNotes.length > 0 : folder.expanded;
 
         return (
           <div key={folder.id}>
@@ -106,7 +132,7 @@ export function FolderTree({
               }}
             >
               <span style={{ fontSize: 12, color: "#6b7280" }}>
-                {folder.expanded ? "▾" : "▸"}
+                {showExpanded ? "▾" : "▸"}
               </span>
               <span style={{ fontWeight: 500, color: "#111" }}>
                 📁 {folder.name}
@@ -119,7 +145,7 @@ export function FolderTree({
             </div>
 
             {/* 展开后的笔记列表 */}
-            {folder.expanded && (
+            {showExpanded && (
               <div style={{ paddingLeft: 24 }}>
                 {folderNotes.map((note) => {
                   const selected = currentNoteId === note.id;
@@ -150,7 +176,7 @@ export function FolderTree({
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
                       }}>
-                        {note.title}
+                        {highlight(note.title, searchQuery)}
                       </span>
                       {selected && (
                         <button

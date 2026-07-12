@@ -2,13 +2,13 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect } from "react";
+import { GhostFormat, setSuggestEnabled } from "./extensions/ghostFormat";
+import { formatTextStream, loadLlmConfig } from "./ai";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
 
 const mdToHtml = remark().use(remarkHtml);
-
-/** 将 markdown 字符串转为 HTML */
 async function renderMd(md: string): Promise<string> {
   try {
     const result = await mdToHtml.process(md);
@@ -18,16 +18,26 @@ async function renderMd(md: string): Promise<string> {
   }
 }
 
+type WriteMode = "suggest" | "format" | "off";
+type AiStatus = "idle" | "formatting" | "linking";
+
 interface EditorProps {
   content: string;
+  mode: WriteMode;
+  focusSignal: number;
+  formatAllSignal: number;
   onUpdate: (html: string) => void;
-  onFormatTrigger: (text: string, callback: (formatted: string) => void) => void;
+  onStatusChange: (status: AiStatus) => void;
 }
 
-export function Editor({ content, onUpdate, onFormatTrigger }: EditorProps) {
-  const formatQueueRef = useRef<string>("");
-  const formattingRef = useRef<boolean>(false);
-
+export function Editor({
+  content,
+  mode,
+  focusSignal,
+  formatAllSignal,
+  onUpdate,
+  onStatusChange,
+}: EditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -35,15 +45,14 @@ export function Editor({ content, onUpdate, onFormatTrigger }: EditorProps) {
       }),
       Link.configure({
         openOnClick: true,
-        HTMLAttributes: {
-          class: "wiki-link",
-        },
+        HTMLAttributes: { class: "wiki-link" },
       }),
       Placeholder.configure({
         placeholder: "开始写作... 不用管格式，AI会帮你整理 ✨",
       }),
+      GhostFormat,
     ],
-    content: content,
+    content,
     onUpdate: ({ editor }) => {
       onUpdate(editor.getHTML());
     },
@@ -56,6 +65,11 @@ export function Editor({ content, onUpdate, onFormatTrigger }: EditorProps) {
     },
   });
 
+  // 模式切换：续写模式下启用 ghost 建议，整理模式下关闭
+  useEffect(() => {
+    setSuggestEnabled(mode === "suggest");
+  }, [mode]);
+
   // 当外部 content 变化时更新编辑器
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
@@ -63,56 +77,38 @@ export function Editor({ content, onUpdate, onFormatTrigger }: EditorProps) {
     }
   }, [content, editor]);
 
-  // 格式化处理：只格式化新增的段落，保留已有内容
-  const handleFormat = useCallback(
-    (text: string) => {
-      if (!text.trim() || text.length < 20) return;
-
-      formatQueueRef.current = text;
-      if (formattingRef.current) return;
-
-      // debounce 2 秒后触发
-      setTimeout(async () => {
-        const toFormat = formatQueueRef.current;
-        if (!toFormat.trim() || formattingRef.current) return;
-
-        formattingRef.current = true;
-        try {
-          await new Promise<void>((resolve) => {
-            onFormatTrigger(toFormat, async (formatted) => {
-              if (editor && formatted && formatted !== toFormat) {
-                // AI 返回的是 markdown，转成 HTML 再渲染
-                const html = await renderMd(formatted);
-                editor.commands.setContent(html);
-              }
-              resolve();
-            });
-          });
-        } finally {
-          formattingRef.current = false;
-        }
-      }, 2000);
-    },
-    [editor, onFormatTrigger],
-  );
-
-  // 监听段落完成（回车键）
+  // 新建笔记后自动聚焦，光标放到末尾
   useEffect(() => {
-    if (!editor) return;
+    if (editor && focusSignal > 0) {
+      editor.commands.focus("end");
+    }
+  }, [focusSignal, editor]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter" && !event.shiftKey) {
-        setTimeout(() => {
-          const text = editor.getText();
-          handleFormat(text);
-        }, 100);
+  // 整理全文：把整篇笔记发给 AI 格式化
+  useEffect(() => {
+    if (!editor || formatAllSignal === 0) return;
+    (async () => {
+      const config = loadLlmConfig();
+      if (!config.apiKey && !config.baseUrl.includes("localhost")) {
+        return;
       }
-    };
-
-    const dom = editor.view.dom;
-    dom.addEventListener("keydown", handleKeyDown);
-    return () => dom.removeEventListener("keydown", handleKeyDown);
-  }, [editor, handleFormat]);
+      onStatusChange("formatting");
+      try {
+        const text = editor.getText();
+        let formatted = "";
+        for await (const chunk of formatTextStream(text, config)) {
+          formatted += chunk;
+        }
+        const html = await renderMd(formatted);
+        editor.commands.setContent(html);
+      } catch (e) {
+        console.error("整理全文失败:", e);
+      } finally {
+        onStatusChange("idle");
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formatAllSignal]);
 
   if (!editor) {
     return (

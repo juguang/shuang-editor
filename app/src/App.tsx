@@ -5,7 +5,7 @@ import { Settings, applyEditorConfig } from "./Settings";
 import { TitleBar } from "./components/TitleBar";
 import { FolderTree } from "./components/FolderTree";
 import { StatusBar } from "./components/StatusBar";
-import { formatTextStream, autoLink, generateTitle, loadLlmConfig } from "./ai";
+import { autoLink, generateTitle, loadLlmConfig } from "./ai";
 
 interface NoteData {
   id: string;
@@ -30,6 +30,17 @@ function App() {
   const [aiStatus, setAiStatus] = useState<"idle" | "formatting" | "linking">("idle");
   const [isDark, setIsDark] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "unsaved">("idle");
+  const [focusSignal, setFocusSignal] = useState(0);
+  const [mode, setMode] = useState<"suggest" | "format" | "off">(
+    () => (localStorage.getItem("editor_mode") as "suggest" | "format" | "off") || "suggest",
+  );
+
+  // 持久化写作模式
+  useEffect(() => {
+    localStorage.setItem("editor_mode", mode);
+  }, [mode]);
+  const [formatAllSignal, setFormatAllSignal] = useState(0);
 
   // 加载编辑器字体设置
   // selectedFolder 保留供后续文件夹过滤使用
@@ -51,18 +62,21 @@ function App() {
     refreshNotes();
   }, [refreshNotes]);
 
-  // 搜索
-  const handleSearch = useCallback(async () => {
-    if (!searchQuery.trim()) {
-      refreshNotes();
-      return;
-    }
-    try {
-      const result = await invoke<NoteSummary[]>("search_notes", { query: searchQuery });
-      setNotes(result);
-    } catch (e) {
-      console.error("搜索失败:", e);
-    }
+  // 搜索（实时，debounce 300ms）
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!searchQuery.trim()) {
+        refreshNotes();
+        return;
+      }
+      try {
+        const result = await invoke<NoteSummary[]>("search_notes", { query: searchQuery });
+        setNotes(result);
+      } catch (e) {
+        console.error("搜索失败:", e);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, [searchQuery, refreshNotes]);
 
   // 新建笔记
@@ -70,6 +84,7 @@ function App() {
     try {
       const note = await invoke<NoteData>("create_note", { title: null });
       setCurrentNote(note);
+      setFocusSignal((n) => n + 1);
       await refreshNotes();
     } catch (e) {
       console.error("创建笔记失败:", e);
@@ -114,31 +129,6 @@ function App() {
   }, [currentNote]);
 
   // AI格式化
-  const handleFormatTrigger = useCallback(
-    async (text: string, callback: (formatted: string) => void) => {
-      const config = loadLlmConfig();
-      if (!config.apiKey && config.provider !== "ollama") {
-        callback(text);
-        return;
-      }
-
-      setAiStatus("formatting");
-      try {
-        let formatted = "";
-        for await (const chunk of formatTextStream(text, config)) {
-          formatted += chunk;
-        }
-        callback(formatted.trim());
-      } catch (e) {
-        console.error("格式化失败:", e);
-        callback(text);
-      } finally {
-        setAiStatus("idle");
-      }
-    },
-    [],
-  );
-
   // 保存时自动链接 + 生成标题
   const handleSaveWithAI = useCallback(async () => {
     if (!currentNote) return;
@@ -188,11 +178,35 @@ function App() {
     }
   }, [isDark]);
 
+  // 自动保存：内容变化 3 秒后静默保存
+  useEffect(() => {
+    if (!currentNote) return;
+    setSaveStatus("unsaved");
+    const timer = setTimeout(async () => {
+      setSaveStatus("saving");
+      try {
+        if (!currentNote) return;
+        await invoke("save_note", {
+          id: currentNote.id,
+          title: currentNote.title,
+          content: currentNote.content,
+          createdAt: currentNote.created_at,
+        });
+        setSaveStatus("saved");
+        setTimeout(() => setSaveStatus("idle"), 2000);
+      } catch {
+        setSaveStatus("idle");
+      }
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [currentNote?.content, currentNote?.id]);
+
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       {/* 顶栏 */}
       <TitleBar
         aiStatus={aiStatus}
+        mode={mode}
         isDark={isDark}
         onToggleDark={() => setIsDark(!isDark)}
         onOpenSettings={() => setShowSettings(true)}
@@ -235,7 +249,6 @@ function App() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               placeholder="搜索笔记..."
               style={{
                 width: "100%",
@@ -255,6 +268,7 @@ function App() {
             selectedFolder={selectedFolder}
             notes={notes}
             currentNoteId={currentNote?.id ?? null}
+            searchQuery={searchQuery}
             onSelectFolder={setSelectedFolder}
             onSelectNote={handleOpenNote}
             onDeleteNote={handleDeleteNote}
@@ -269,13 +283,23 @@ function App() {
               <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
                 <Editor
                   content={currentNote.content}
+                  mode={mode}
+                  focusSignal={focusSignal}
+                  formatAllSignal={formatAllSignal}
                   onUpdate={(html) => {
                     setCurrentNote({ ...currentNote, content: html });
                   }}
-                  onFormatTrigger={handleFormatTrigger}
+                  onStatusChange={setAiStatus}
                 />
               </div>
-              <StatusBar createdAt={currentNote.created_at} onSave={handleSaveWithAI} />
+              <StatusBar
+                createdAt={currentNote.created_at}
+                saveStatus={saveStatus}
+                mode={mode}
+                onModeChange={setMode}
+                onFormatAll={() => setFormatAllSignal((n) => n + 1)}
+                onSave={handleSaveWithAI}
+              />
             </>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>

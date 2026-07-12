@@ -163,6 +163,13 @@ body {
   height: 0;
 }
 
+/* Ghost text 样式 — AI 格式建议的灰色预览 */
+.prosemirror-ghost-text {
+  opacity: 0.35 !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
 /* 滚动条 */
 ::-webkit-scrollbar {
   width: 6px;
