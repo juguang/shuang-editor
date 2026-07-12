@@ -19,14 +19,17 @@
     "@tiptap/extension-link": "^3.27.3",
     "@tiptap/extension-ordered-list": "^3.27.3",
     "@tiptap/extension-placeholder": "^3.27.3",
+    "@tiptap/markdown": "^3.27.3",
     "@tiptap/react": "^3.27.3",
     "@tiptap/starter-kit": "^3.27.3",
+    "@types/turndown": "^5.0.6",
     "prosemirror-completion": "^0.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "remark": "^15.0.1",
     "remark-html": "^16.0.1",
     "remark-parse": "^11.0.0",
+    "turndown": "^7.2.4",
     "unified": "^11.0.5"
   },
   "devDependencies": {
