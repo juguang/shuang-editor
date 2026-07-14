@@ -5,15 +5,14 @@ const zh: Record<string, string> = {
   "titlebar.off": "AI 关闭",
   "titlebar.formatting": "✨ 正在整理格式...",
   "titlebar.noKey": "⚠️ 未配置 API Key",
-  "titlebar.settings": "设置",
-  "titlebar.dark": "切换暗色",
-  "titlebar.light": "切换亮色",
+  "titlebar.dark": "🌙",
+  "titlebar.light": "☀️",
 
   // 编辑器
   "editor.placeholder": "开始写作... 不用管格式，AI会帮你整理 ✨",
   "editor.loading": "加载编辑器...",
   "editor.sourceMode": "源码模式 - 编辑 md 标记",
-  "editor.folderName": "文件夹名称",
+  "editor.folderName": "文件夹名",
 
   // 底栏
   "statusbar.saving": "保存中...",
@@ -43,32 +42,41 @@ const zh: Record<string, string> = {
   "empty.title": "选择一个笔记或创建新笔记开始",
   "empty.subtitle": "写的时候不用管格式，AI会自动帮你整理 ✨",
 
-  // 设置
+  // 设置 - 标签页
   "settings.title": "设置",
-  "settings.llm": "LLM 配置",
-  "settings.editor": "编辑器",
-  "settings.storage": "存储",
+  "settings.tabLlm": "LLM 配置",
+  "settings.tabEditor": "编辑器",
+  "settings.tabStorage": "存储",
   "settings.language": "语言",
+  "settings.zh": "中文",
+  "settings.en": "English",
+  "settings.save": "保存",
+  "settings.close": "关闭",
+
+  // 设置 - LLM
   "settings.provider": "AI 提供商",
+  "settings.deepseek": "DeepSeek",
+  "settings.openai": "OpenAI",
+  "settings.ollama": "Ollama (本地)",
   "settings.apiKey": "API Key",
   "settings.apiKeyHint": "你的 Key 只存在本地，不会上传",
   "settings.model": "模型",
   "settings.baseUrl": "API 地址",
+
+  // 设置 - 编辑器
   "settings.fontSize": "正文字号",
   "settings.fontFamily": "正文字体",
-  "settings.small": "小",
-  "settings.medium": "中",
-  "settings.large": "大",
+  "settings.fontSmall": "小",
+  "settings.fontMedium": "中",
+  "settings.fontLarge": "大",
   "settings.fontDefault": "系统默认",
   "settings.fontSerif": "衬线",
   "settings.fontMono": "等宽",
+
+  // 设置 - 存储
   "settings.noteDir": "笔记存储目录",
   "settings.selectDir": "选择...",
   "settings.dirHint": "修改后保存，笔记列表将重新加载",
-  "settings.save": "保存",
-  "settings.close": "关闭",
-  "settings.zh": "中文",
-  "settings.en": "English",
 };
 
 export default zh;

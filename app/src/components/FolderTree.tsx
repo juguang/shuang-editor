@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
+import { useI18n } from "../i18n";
 
 export interface Folder {
   id: string;
@@ -79,6 +80,12 @@ export function FolderTree({
   onSelectNote,
   onDeleteNote,
 }: FolderTreeProps) {
+  const { t } = useI18n();
+  // 翻译文件夹名（只有预设文件夹有翻译，用户创建的不翻译）
+  const folderName = (id: string, fallback: string) => {
+    const r = t("folder." + id);
+    return r !== "folder." + id ? r : fallback;
+  };
   const [isCreating, setIsCreating] = useState<string | null>(null); // parent folder id, null = root
   const [newName, setNewName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -146,7 +153,7 @@ export function FolderTree({
           </span>
           <span style={{ fontSize: 13 }}>📁</span>
           <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text-primary)", flex: 1 }}>
-            {folder.name}
+            {folderName(folder.id, folder.name)}
           </span>
           {noteCount > 0 && (
             <span style={{ fontSize: 11, color: "var(--text-muted)", marginRight: 4 }}>{noteCount}</span>
@@ -251,7 +258,7 @@ export function FolderTree({
                 if (e.key === "Escape") { setNewName(""); setIsCreating(null); }
               }}
               onBlur={() => { setNewName(""); setIsCreating(null); }}
-              placeholder="子文件夹名称"
+              placeholder={t("sidebar.subFolder")}
               style={{
                 width: "100%",
                 padding: "3px 6px",
@@ -296,7 +303,7 @@ export function FolderTree({
               color: "var(--text-muted)",
             }}
           >
-            + 新建文件夹
+            {t("sidebar.newFolder")}
           </button>
         ) : isCreating === "_root" ? (
           <input
@@ -313,7 +320,7 @@ export function FolderTree({
               if (e.key === "Escape") { setNewName(""); setIsCreating(null); }
             }}
             onBlur={() => { setNewName(""); setIsCreating(null); }}
-            placeholder="文件夹名称"
+            placeholder={t("editor.folderName")}
             style={{
               flex: 1,
               padding: "3px 6px",

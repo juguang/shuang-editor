@@ -15,15 +15,15 @@ interface EditorConfig {
 }
 
 const FONT_SIZE_OPTIONS = [
-  { value: 14, label: "小" },
-  { value: 16, label: "中" },
-  { value: 18, label: "大" },
+  { value: 14, labelKey: "settings.fontSmall" },
+  { value: 16, labelKey: "settings.fontMedium" },
+  { value: 18, labelKey: "settings.fontLarge" },
 ];
 
 const FONT_FAMILY_OPTIONS = [
-  { value: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', label: "系统默认" },
-  { value: '"Georgia", "Noto Serif CJK SC", serif', label: "衬线" },
-  { value: '"JetBrains Mono", "Fira Code", monospace', label: "等宽" },
+  { value: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', labelKey: "settings.fontDefault" },
+  { value: '"Georgia", "Noto Serif CJK SC", serif', labelKey: "settings.fontSerif" },
+  { value: '"JetBrains Mono", "Fira Code", monospace', labelKey: "settings.fontMono" },
 ];
 
 function loadEditorConfig(): EditorConfig {
@@ -216,16 +216,16 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
             borderBottom: "1px solid #f0f0f0",
           }}
         >
-          {tabButton("llm", "LLM 配置")}
-          {tabButton("editor", "编辑器")}
-          {tabButton("storage", "存储")}
+          {tabButton("llm", t("settings.tabLlm"))}
+          {tabButton("editor", t("settings.tabEditor"))}
+          {tabButton("storage", t("settings.tabStorage"))}
         </div>
 
         {/* 内容 */}
         <div style={{ padding: "20px 24px", maxHeight: 320, overflowY: "auto" }}>
           {activeTab === "storage" ? (
             <div>
-              <label style={labelStyle}>笔记存储目录</label>
+              <label style={labelStyle}>{t("settings.noteDir")}</label>
               <div
                 style={{
                   display: "flex",
@@ -270,18 +270,18 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  选择...
+                  {t("settings.selectDir")}
                 </button>
               </div>
               <p style={{ fontSize: 12, color: "#9ca3af", margin: "6px 0 0" }}>
-                修改后保存，笔记列表将重新加载
+                {t("settings.dirHint")}
               </p>
             </div>
           ) : activeTab === "llm" ? (
             <>
               {/* Provider */}
               <div style={sectionStyle}>
-                <label style={labelStyle}>AI 提供商</label>
+                <label style={labelStyle}>{t("settings.provider")}</label>
                 <div style={{ display: "flex", gap: 6 }}>
                   {providers.map((p) => (
                     <button
@@ -289,7 +289,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                       onClick={() => handleProviderChange(p.value)}
                       style={llmConfig.provider === p.value ? activeBtnStyle : inactiveBtnStyle}
                     >
-                      {p.label}
+                      {t("settings." + p.value)}
                     </button>
                   ))}
                 </div>
@@ -298,7 +298,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
               {/* API Key */}
               {llmConfig.provider !== "ollama" && (
                 <div style={sectionStyle}>
-                  <label style={labelStyle}>API Key</label>
+                  <label style={labelStyle}>{t("settings.apiKey")}</label>
                   <input
                     type="password"
                     value={llmConfig.apiKey}
@@ -307,14 +307,14 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                     style={inputStyle}
                   />
                   <p style={{ fontSize: 12, color: "#9ca3af", margin: "6px 0 0" }}>
-                    你的 Key 只存在本地，不会上传
+                    {t("settings.apiKeyHint")}
                   </p>
                 </div>
               )}
 
               {/* Model */}
               <div style={sectionStyle}>
-                <label style={labelStyle}>模型</label>
+                <label style={labelStyle}>{t("settings.model")}</label>
                 <input
                   type="text"
                   value={llmConfig.model}
@@ -326,7 +326,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
 
               {/* Base URL */}
               <div style={{ marginBottom: 0 }}>
-                <label style={labelStyle}>API 地址</label>
+                <label style={labelStyle}>{t("settings.baseUrl")}</label>
                 <input
                   type="text"
                   value={llmConfig.baseUrl}
@@ -340,7 +340,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
             <>
               {/* 字号 */}
               <div style={sectionStyle}>
-                <label style={{ ...labelStyle, marginBottom: 12 }}>正文字号</label>
+                <label style={{ ...labelStyle, marginBottom: 12 }}>{t("settings.fontSize")}</label>
                 <div style={{ display: "flex", gap: 6 }}>
                   {FONT_SIZE_OPTIONS.map((opt) => (
                     <button
@@ -352,7 +352,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                         textAlign: "center",
                       }}
                     >
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -360,7 +360,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
 
               {/* 字体 */}
               <div style={{ marginBottom: 0 }}>
-                <label style={{ ...labelStyle, marginBottom: 12 }}>正文字体</label>
+                <label style={{ ...labelStyle, marginBottom: 12 }}>{t("settings.fontFamily")}</label>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {FONT_FAMILY_OPTIONS.map((opt) => (
                     <button
@@ -381,7 +381,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                         fontFamily: opt.value,
                       }}
                     >
-                      {opt.label}
+                      {t(opt.labelKey)}
                     </button>
                   ))}
                 </div>
@@ -419,7 +419,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
               cursor: "pointer",
             }}
           >
-            保存
+            {t("settings.save")}
           </button>
         </div>
       </div>

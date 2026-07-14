@@ -266,7 +266,7 @@ function App() {
                 cursor: "pointer",
               }}
             >
-              <span>+</span> 新建笔记
+              <span>+</span> {t("sidebar.newNote")}
             </button>
 
             {/* 搜索 */}
@@ -274,7 +274,7 @@ function App() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜索笔记..."
+              placeholder={t("sidebar.search")}
               style={{
                 width: "100%",
                 padding: "8px 12px",

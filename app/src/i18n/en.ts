@@ -5,9 +5,8 @@ const en: Record<string, string> = {
   "titlebar.off": "AI Off",
   "titlebar.formatting": "✨ Formatting...",
   "titlebar.noKey": "⚠️ No API Key",
-  "titlebar.settings": "Settings",
-  "titlebar.dark": "Dark mode",
-  "titlebar.light": "Light mode",
+  "titlebar.dark": "🌙",
+  "titlebar.light": "☀️",
 
   // Editor
   "editor.placeholder": "Start writing... AI will help format ✨",
@@ -43,32 +42,41 @@ const en: Record<string, string> = {
   "empty.title": "Select a note or create a new one",
   "empty.subtitle": "Write naturally, AI will format for you ✨",
 
-  // Settings
+  // Settings - tabs
   "settings.title": "Settings",
-  "settings.llm": "LLM Config",
-  "settings.editor": "Editor",
-  "settings.storage": "Storage",
+  "settings.tabLlm": "LLM Config",
+  "settings.tabEditor": "Editor",
+  "settings.tabStorage": "Storage",
   "settings.language": "Language",
+  "settings.zh": "中文",
+  "settings.en": "English",
+  "settings.save": "Save",
+  "settings.close": "Close",
+
+  // Settings - LLM
   "settings.provider": "AI Provider",
+  "settings.deepseek": "DeepSeek",
+  "settings.openai": "OpenAI",
+  "settings.ollama": "Ollama (Local)",
   "settings.apiKey": "API Key",
-  "settings.apiKeyHint": "Your key is stored locally only",
+  "settings.apiKeyHint": "Your key is stored locally",
   "settings.model": "Model",
   "settings.baseUrl": "API URL",
+
+  // Settings - Editor
   "settings.fontSize": "Font Size",
   "settings.fontFamily": "Font Family",
-  "settings.small": "Small",
-  "settings.medium": "Medium",
-  "settings.large": "Large",
+  "settings.fontSmall": "Small",
+  "settings.fontMedium": "Medium",
+  "settings.fontLarge": "Large",
   "settings.fontDefault": "System Default",
   "settings.fontSerif": "Serif",
   "settings.fontMono": "Monospace",
+
+  // Settings - Storage
   "settings.noteDir": "Notes Directory",
   "settings.selectDir": "Select...",
   "settings.dirHint": "Save to reload notes from new directory",
-  "settings.save": "Save",
-  "settings.close": "Close",
-  "settings.zh": "中文",
-  "settings.en": "English",
 };
 
 export default en;
