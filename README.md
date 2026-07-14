@@ -110,25 +110,6 @@ npm run build
 
 ---
 
-## Keywords / 搜索关键词
-
-> Shuang, 爽, AI markdown editor, AI Markdown 编辑器, AI-native writing, AI 原生写作, WYSIWYG markdown, 所见即所得, Typora alternative, Typora 替代, Copilot for writing, 写作助手, AI formatting, 智能格式化, markdown knowledge base, 知识库, local note-taking, 本地笔记, Tauri app, Tauri 桌面应用, open source markdown editor, 开源 Markdown 编辑器, DeepSeek writing, AI note-taking, 笔记软件, macOS markdown editor, 写作软件, auto-format markdown, 自动格式化, ghost text, 灰色建议, live preview markdown, 内联预览, bilingual editor, 双语编辑器
-
----
-
-## Roadmap / 路线
-
-- [x] MVP UI
-- [x] AI ghost text formatting
-- [x] Wiki-links and cross-note navigation
-- [ ] Typora-style inline live preview (editable markers)
-- [ ] Code blocks with syntax highlighting
-- [ ] Export to PDF / HTML
-- [ ] Backlinks panel
-- [ ] Graph view
-
----
-
 ## License / 许可证
 
 MIT
