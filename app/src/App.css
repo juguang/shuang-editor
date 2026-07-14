@@ -168,6 +168,18 @@ body {
   user-select: none !important;
 }
 
+/* Typora 风格内联预览 — 光标所在块显示灰色 md 标记 */
+.live-preview-marker[data-md]::before {
+  content: attr(data-md);
+  float: left;
+  opacity: 0.3;
+  pointer-events: none;
+  user-select: none;
+  font-weight: 400;
+  color: inherit;
+  margin-right: 0.3em;
+}
+
 /* 滚动条 */
 ::-webkit-scrollbar {
   width: 6px;

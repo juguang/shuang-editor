@@ -5,6 +5,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
 import TurndownService from "turndown";
 import { GhostFormat, setSuggestEnabled } from "./extensions/ghostFormat";
+import { LivePreview } from "./extensions/livePreview";
 import { formatTextStream, loadLlmConfig } from "./ai";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
@@ -53,6 +54,7 @@ export function Editor({
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "wiki-link" } }),
       Placeholder.configure({ placeholder: "开始写作... 不用管格式，AI会帮你整理 ✨" }),
       GhostFormat,
+      LivePreview,
     ],
     content,
     onUpdate: ({ editor }) => {
