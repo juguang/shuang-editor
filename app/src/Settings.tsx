@@ -191,7 +191,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
             padding: "24px 24px 16px",
           }}
         >
-          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: "#111" }}>设置</h2>
+          <h2 style={{ margin: 0, fontSize: 18, fontWeight: 600, color: "#111" }}>{t("settings.title")}</h2>
           <button
             onClick={onClose}
             style={{
@@ -251,7 +251,7 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                 </span>
                 <button
                   onClick={async () => {
-                    const dir = await open({ directory: true, multiple: false, title: "选择笔记目录" });
+                    const dir = await open({ directory: true, multiple: false, title: lang === "zh" ? "选择笔记目录" : "Select Notes Directory" });
                     if (dir) {
                       // open 返回路径字符串（不含 file:// 前缀）
                       const path = typeof dir === "string" ? dir : dir;
