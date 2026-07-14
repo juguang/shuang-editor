@@ -1,3 +1,5 @@
+import { useI18n } from "../i18n";
+
 type WriteMode = "suggest" | "format" | "off";
 
 interface TitleBarProps {
@@ -9,13 +11,8 @@ interface TitleBarProps {
   onOpenSettings: () => void;
 }
 
-const modeLabel: Record<WriteMode, string> = {
-  suggest: "AI 续写",
-  format: "AI 整理",
-  off: "AI 关闭",
-};
-
 export function TitleBar({ aiStatus, mode, isDark, apiConfigured, onToggleDark, onOpenSettings }: TitleBarProps) {
+  const { t } = useI18n();
   const isWorking = aiStatus !== "idle";
 
   return (
@@ -55,7 +52,7 @@ export function TitleBar({ aiStatus, mode, isDark, apiConfigured, onToggleDark, 
             marginLeft: 8,
           }}
         >
-          {modeLabel[mode]}
+          {t("titlebar." + mode)}
         </span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -69,7 +66,7 @@ export function TitleBar({ aiStatus, mode, isDark, apiConfigured, onToggleDark, 
               borderRadius: 4,
             }}
           >
-            ⚠️ 未配置 API Key
+            {t("titlebar.noKey")}
           </span>
         )}
         {isWorking && (
@@ -82,7 +79,7 @@ export function TitleBar({ aiStatus, mode, isDark, apiConfigured, onToggleDark, 
               borderRadius: 6,
             }}
           >
-            ✨ 正在整理格式...
+            {t("titlebar.formatting")}
           </span>
         )}
         <button

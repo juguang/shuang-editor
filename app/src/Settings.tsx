@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useI18n } from "./i18n";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { loadLlmConfig, saveLlmConfig, type LlmConfig } from "./ai";
@@ -48,6 +49,7 @@ const providers = [
 ];
 
 export function Settings({ onClose, onDirChange }: SettingsProps) {
+  const { t, lang, setLang } = useI18n();
   const [activeTab, setActiveTab] = useState<"llm" | "editor" | "storage">("llm");
   const [llmConfig, setLlmConfig] = useState<LlmConfig>(loadLlmConfig());
   const [editorConfig, setEditorConfig] = useState<EditorConfig>(loadEditorConfig());
@@ -382,6 +384,19 @@ export function Settings({ onClose, onDirChange }: SettingsProps) {
                       {opt.label}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* 语言切换 */}
+              <div style={{ ...sectionStyle, marginBottom: 0 }}>
+                <label style={{ ...labelStyle, marginBottom: 12 }}>{t("settings.language")}</label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button onClick={() => setLang("zh")} style={lang === "zh" ? activeBtnStyle : inactiveBtnStyle}>
+                    {t("settings.zh")}
+                  </button>
+                  <button onClick={() => setLang("en")} style={lang === "en" ? activeBtnStyle : inactiveBtnStyle}>
+                    {t("settings.en")}
+                  </button>
                 </div>
               </div>
             </>

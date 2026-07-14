@@ -1,3 +1,5 @@
+import { useI18n } from "../i18n";
+
 type WriteMode = "suggest" | "format" | "off";
 type SaveStatus = "idle" | "saving" | "saved" | "unsaved";
 
@@ -9,13 +11,6 @@ interface StatusBarProps {
   onFormatAll: () => void;
   onSave: () => void;
 }
-
-const saveLabel: Record<SaveStatus, string> = {
-  idle: "",
-  saving: "保存中...",
-  saved: "✓ 已保存",
-  unsaved: "",
-};
 
 const saveColor: Record<SaveStatus, string> = {
   idle: "",
@@ -32,6 +27,8 @@ export function StatusBar({
   onFormatAll,
   onSave,
 }: StatusBarProps) {
+  const { t } = useI18n();
+
   const segBtn = (value: WriteMode, label: string) => (
     <button
       onClick={() => onModeChange(value)}
@@ -49,6 +46,11 @@ export function StatusBar({
     </button>
   );
 
+  const statusText =
+    saveStatus === "saving" ? t("statusbar.saving") :
+    saveStatus === "saved" ? t("statusbar.saved") :
+    "";
+
   return (
     <div
       style={{
@@ -63,9 +65,9 @@ export function StatusBar({
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{createdAt}</span>
-        {saveStatus !== "idle" && (
+        {statusText && (
           <span style={{ fontSize: 11, color: saveColor[saveStatus] }}>
-            {saveLabel[saveStatus]}
+            {statusText}
           </span>
         )}
       </div>
@@ -80,9 +82,9 @@ export function StatusBar({
             gap: 2,
           }}
         >
-          {segBtn("suggest", "续写")}
-          {segBtn("format", "整理")}
-          {segBtn("off", "关闭")}
+          {segBtn("suggest", t("statusbar.suggest"))}
+          {segBtn("format", t("statusbar.format"))}
+          {segBtn("off", t("statusbar.off"))}
         </div>
 
         {mode === "format" && (
@@ -98,7 +100,7 @@ export function StatusBar({
               cursor: "pointer",
             }}
           >
-            ✨ 整理全文
+            {t("statusbar.formatAll")}
           </button>
         )}
 
@@ -114,7 +116,7 @@ export function StatusBar({
             cursor: "pointer",
           }}
         >
-          💾 保存
+          {t("statusbar.save")}
         </button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState, useEffect, useCallback } from "react";
+import { useI18n } from "./i18n";
 import { invoke } from "@tauri-apps/api/core";
 import { Editor } from "./Editor";
 import { Settings, applyEditorConfig } from "./Settings";
@@ -24,6 +25,7 @@ interface NoteSummary {
 }
 
 function App() {
+  const { t } = useI18n();
   const [notes, setNotes] = useState<NoteSummary[]>([]);
   const [currentNote, setCurrentNote] = useState<NoteData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -331,10 +333,10 @@ function App() {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
               <span style={{ fontSize: 60, marginBottom: 16 }}>📓</span>
               <p style={{ fontSize: 18, color: "var(--text-tertiary)", margin: 0 }}>
-                选择一个笔记或创建新笔记开始
+                {t("empty.title")}
               </p>
               <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 8 }}>
-                写的时候不用管格式，AI会自动帮你整理 ✨
+                {t("empty.subtitle")}
               </p>
             </div>
           )}

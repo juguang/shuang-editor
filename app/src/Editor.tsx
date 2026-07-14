@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useI18n } from "./i18n";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -44,6 +45,7 @@ export function Editor({
   onStatusChange,
   onOpenNote,
 }: EditorProps) {
+  const { t } = useI18n();
   const [showSource, setShowSource] = useState(false);
   const [sourceText, setSourceText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -52,7 +54,7 @@ export function Editor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "wiki-link" } }),
-      Placeholder.configure({ placeholder: "开始写作... 不用管格式，AI会帮你整理 ✨" }),
+      Placeholder.configure({ placeholder: t("editor.placeholder") }),
       GhostFormat,
       LivePreview,
     ],
