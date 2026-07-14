@@ -1,119 +1,123 @@
 # Shuang 爽
 
-> **AI-Native Markdown Editor** — Write naturally, AI formats for you.
->
-> **AI 原生 Markdown 编辑器** — 零语法纯文本写作，AI 自动加格式、建链接、归类。
+**AI-Native Markdown Editor**
 
 ---
 
-## Screenshot / 截图
+## 🇬🇧 English
 
-<!-- TODO: Add screenshot -->
+Write naturally, AI formats for you. No markdown knowledge needed.
 
----
+### Features
 
-## Features / 功能
+- **AI Ghost Text** — Copilot-style gray suggestions appear as you type. Press `Tab` to accept formatting.
+- **WYSIWYG** — TipTap-powered rich text editing. What you see is what you get.
+- **Live Preview** — Markdown markers (`#`, `-`, `>`) shown in gray when focused.
+- **Wiki Links** — Automatic `[[note]]` detection on save. Click to navigate.
+- **Three Modes** — Suggest (auto-format), Format All (full-doc), Off (manual).
+- **Multi-level Folders** — Nestable folder tree in sidebar.
+- **Source Toggle** — `Ctrl+/` to switch between WYSIWYG and raw markdown.
+- **Bilingual UI** — Switch between English and 中文 in Settings.
+- **Dark Mode** — Light/dark toggle.
+- **Local-first** — Notes stored as plain `.md` files in `~/Notebook/`.
+- **Full-text Search** — Real-time with keyword highlighting.
+- **Auto-save** — Content saves 3 seconds after you stop typing.
 
-- **Zero-syntax writing** — Just type, no markdown knowledge needed. AI adds formatting automatically.
-- **AI Ghost Text** — Copilot-style gray suggestions appear as you type. Press Tab to accept formatting.
-- **WYSIWYG** — TipTap-powered rich text editing, what you see is what you get.
-- **Live Preview** — Markdown markers (`#`, `-`, `>`) shown in gray when focused (Typora-style).
-- **Wiki Links** — Automatic `[[note]]` link detection on save. Clickable cross-note navigation.
-- **Three Writing Modes** — Suggest (auto-format), Format All (full-doc cleanup), Off (plain manual).
-- **Multi-level Folders** — Organize notes with nested folders.
-- **Source Toggle** — Press `Ctrl+/` to switch between WYSIWYG and raw markdown editing.
-- **Bilingual UI** — Switch between 中文 and English via Settings.
-- **Dark Mode** — 🌙 Light/dark toggle.
-- **Local-first** — All notes stored as plain `.md` files with YAML frontmatter in `~/Notebook/`.
-- **Configurable Storage** — Choose any directory for your notes (native folder picker).
-- **Full-text Search** — Real-time search with keyword highlighting.
-- **Auto-save** — Content auto-saves 3 seconds after you stop typing.
-- **Tauri Desktop** — Lightweight native macOS app (Tauri 2 + React 19).
-
-**零语法写作** — 打开就写，不需要懂任何 markdown 语法，AI 自动格式化。
-**AI 灰色建议** — Copilot 风格建议，Tab 接受格式，继续打字忽略。
-**所见即所得** — TipTap WYSIWYG 编辑器，无需源码/预览切换。
-**内联预览** — 光标放在标题上时显示灰色 `#` 标记（Typora 风格）。
-**Wiki 链接** — 保存时自动识别 `[[笔记]]` 链接，点击可跳转。
-**三种写作模式** — 续写（自动建议）、整理（全文格式化）、关闭（纯手动）。
-**多级文件夹** — 侧边栏文件夹树，支持嵌套子文件夹。
-**源码切换** — `Ctrl+/` 一键切换到 markdown 源码编辑。
-**中英文双语** — 设置里一键切换界面语言。
-**暗色模式** — 🌙 亮色/暗色切换。
-**本地优先** — 所有笔记存为标准 `.md` 文件（YAML frontmatter），存在 `~/Notebook/`。
-**可配置目录** — 原生目录选择器，笔记存在任何你想放的位置。
-**全文搜索** — 实时搜索，关键词高亮显示。
-**自动保存** — 打字停止 3 秒后自动保存。
-**Tauri 桌面应用** — 轻量原生 macOS 应用（Tauri 2 + React 19）。
-
----
-
-## Tech Stack / 技术栈
+### Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Desktop Framework | **Tauri 2** |
+| Desktop | Tauri 2 |
 | Frontend | React 19 + TypeScript |
 | Editor | TipTap 3 (ProseMirror) |
-| Styling | Tailwind CSS 4 |
 | Build | Vite 7 |
-| Backend | Rust (Tauri commands) |
-| Storage | Local `.md` files |
+| Backend | Rust |
+| Storage | Plain `.md` files |
 | AI | DeepSeek / OpenAI / Ollama (BYO key) |
 
----
-
-## Quick Start / 快速开始
+### Quick Start
 
 ```bash
-# Prerequisites / 前置条件
-# Rust toolchain: https://rustup.rs
-# Node.js 20+
-
 cd app
 npm install
-
-# Development / 开发
-npm run tauri dev     # Desktop app with HMR
-npm run dev           # Browser only (no Tauri backend)
-
-# Build / 构建
-npm run tauri build   # Production build + DMG
-
-# Type check / 类型检查
-npm run build
+npm run tauri dev   # Desktop app
+npm run dev         # Browser only
+npm run tauri build # Production DMG
 ```
 
----
+### Shortcuts
 
-## Configuration / 配置
-
-1. Click ⚙️ in the title bar → **LLM Config** tab
-2. Enter your API Key (DeepSeek / OpenAI / Ollama)
-3. Switch writing mode in the status bar: `[Suggest] [Format] [Off]`
-
----
-
-## Keyboard Shortcuts / 快捷键
-
-| Shortcut | Action |
-|----------|--------|
-| `Tab` | Accept AI format suggestion |
-| `Esc` | Dismiss AI suggestion |
-| `Ctrl+/` | Toggle source / WYSIWYG mode |
-| `Cmd+1` | Heading 1 |
-| `Cmd+2` | Heading 2 |
-| `Cmd+3` | Heading 3 |
+| Key | Action |
+|-----|--------|
+| `Tab` | Accept AI suggestion |
+| `Esc` | Dismiss suggestion |
+| `Ctrl+/` | Toggle source view |
+| `Cmd+1/2/3` | Heading 1/2/3 |
 | `Cmd+0` | Paragraph |
-| `Shift+Tab` | Decrease heading level |
-| `Tab` | Increase heading level |
 
 ---
 
-## License / 许可证
+## 🇨🇳 中文
+
+零语法纯文本写作，AI 自动加格式、建链接、归类。
+
+### 功能
+
+- **AI 灰色建议** — 打字时显示 Copilot 风格建议，`Tab` 接受格式
+- **所见即所得** — TipTap WYSIWYG 编辑器，无需切换源码/预览
+- **内联预览** — 光标放在标题/列表上时，灰色显示 `#` `-` 标记
+- **Wiki 链接** — 保存时自动识别 `[[笔记]]`，点击跳转
+- **三种模式** — 续写（自动建议）、整理（全文格式化）、关闭（纯手动）
+- **多级文件夹** — 侧边栏文件夹树，支持嵌套
+- **源码切换** — `Ctrl+/` 一键切换到 markdown 源码编辑
+- **中英文双语** — 设置里一键切换界面语言
+- **暗色模式** — 亮色/暗色自由切换
+- **本地优先** — 笔记存为标准 `.md` 文件，放在 `~/Notebook/`
+- **全文搜索** — 实时搜索，关键词高亮
+- **自动保存** — 停止打字 3 秒后自动保存
+
+### 技术栈
+
+| 层 | 技术 |
+|----|------|
+| 桌面框架 | Tauri 2 |
+| 前端 | React 19 + TypeScript |
+| 编辑器 | TipTap 3 (ProseMirror) |
+| 构建 | Vite 7 |
+| 后端 | Rust |
+| 存储 | 标准 `.md` 文件 |
+| AI | DeepSeek / OpenAI / Ollama（自带 Key） |
+
+### 快速开始
+
+```bash
+cd app
+npm install
+npm run tauri dev   # 桌面应用
+npm run dev         # 仅浏览器
+npm run tauri build # 构建 DMG
+```
+
+### 快捷键
+
+| 按键 | 功能 |
+|------|------|
+| `Tab` | 接受 AI 格式建议 |
+| `Esc` | 取消建议 |
+| `Ctrl+/` | 切换源码/预览 |
+| `Cmd+1/2/3` | 标题 1/2/3 |
+| `Cmd+0` | 段落 |
+
+---
+
+### Configuration / 配置
+
+1. Click ⚙️ → **LLM Config** → enter API Key
+2. Switch mode in the status bar: `[Suggest] [Format] [Off]`
+3. Toggle language in ⚙️ → Editor → Language
+
+---
+
+### License / 许可证
 
 MIT
-
----
-
-*Made with ❤️ and AI*
