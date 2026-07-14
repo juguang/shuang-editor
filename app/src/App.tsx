@@ -1,9 +1,10 @@
+import "./App.css";
 import { useState, useEffect, useCallback } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Editor } from "./Editor";
 import { Settings, applyEditorConfig } from "./Settings";
 import { TitleBar } from "./components/TitleBar";
-import { FolderTree } from "./components/FolderTree";
+import { FolderTree, defaultFolders, type Folder } from "./components/FolderTree";
 import { StatusBar } from "./components/StatusBar";
 import { autoLink, generateTitle, loadLlmConfig } from "./ai";
 
@@ -32,6 +33,16 @@ function App() {
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "unsaved">("idle");
   const [focusSignal, setFocusSignal] = useState(0);
+  const [folders, setFolders] = useState<Folder[]>(
+    () => {
+      try {
+        const stored = localStorage.getItem("notebook_folders");
+        return stored ? JSON.parse(stored) : defaultFolders;
+      } catch {
+        return defaultFolders;
+      }
+    },
+  );
   const [mode, setMode] = useState<"suggest" | "format" | "off">(
     () => (localStorage.getItem("editor_mode") as "suggest" | "format" | "off") || "suggest",
   );
@@ -184,6 +195,11 @@ function App() {
     }
   }, [isDark]);
 
+  // 持久化文件夹列表
+  useEffect(() => {
+    localStorage.setItem("notebook_folders", JSON.stringify(folders));
+  }, [folders]);
+
   // 自动保存：内容变化 3 秒后静默保存
   useEffect(() => {
     if (!currentNote) return;
@@ -214,6 +230,7 @@ function App() {
         aiStatus={aiStatus}
         mode={mode}
         isDark={isDark}
+        apiConfigured={!!loadLlmConfig().apiKey}
         onToggleDark={() => setIsDark(!isDark)}
         onOpenSettings={() => setShowSettings(true)}
       />
@@ -224,8 +241,8 @@ function App() {
           style={{
             width: 280,
             minWidth: 280,
-            borderRight: "1px solid #f0f0f0",
-            background: "#fafafa",
+            borderRight: "1px solid var(--border-primary)",
+            background: "var(--bg-secondary)",
             display: "flex",
             flexDirection: "column",
           }}
@@ -237,8 +254,8 @@ function App() {
               style={{
                 width: "100%",
                 padding: 8,
-                background: "#111",
-                color: "white",
+                background: "var(--text-primary)",
+                color: "var(--bg-primary)",
                 borderRadius: 8,
                 fontSize: 13,
                 fontWeight: 500,
@@ -259,10 +276,11 @@ function App() {
               style={{
                 width: "100%",
                 padding: "8px 12px",
-                border: "1px solid #e5e7eb",
+                border: "1px solid var(--border-secondary)",
                 borderRadius: 8,
                 fontSize: 13,
-                background: "white",
+                background: "var(--bg-primary)",
+                color: "var(--text-primary)",
                 outline: "none",
                 boxSizing: "border-box",
               }}
@@ -275,15 +293,16 @@ function App() {
             notes={notes}
             currentNoteId={currentNote?.id ?? null}
             searchQuery={searchQuery}
+            folders={folders}
+            onFoldersChange={setFolders}
             onSelectFolder={setSelectedFolder}
             onSelectNote={handleOpenNote}
             onDeleteNote={handleDeleteNote}
-            onNewFolder={() => alert("新建文件夹（MVP 占位）")}
           />
         </aside>
 
         {/* 编辑区 */}
-        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "white" }}>
+        <main style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--bg-primary)" }}>
           {currentNote ? (
             <>
               <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
@@ -311,10 +330,10 @@ function App() {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%" }}>
               <span style={{ fontSize: 60, marginBottom: 16 }}>📓</span>
-              <p style={{ fontSize: 18, color: "#6b7280", margin: 0 }}>
+              <p style={{ fontSize: 18, color: "var(--text-tertiary)", margin: 0 }}>
                 选择一个笔记或创建新笔记开始
               </p>
-              <p style={{ fontSize: 14, color: "#9ca3af", marginTop: 8 }}>
+              <p style={{ fontSize: 14, color: "var(--text-muted)", marginTop: 8 }}>
                 写的时候不用管格式，AI会自动帮你整理 ✨
               </p>
             </div>

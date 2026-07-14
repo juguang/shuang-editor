@@ -18,10 +18,10 @@ const saveLabel: Record<SaveStatus, string> = {
 };
 
 const saveColor: Record<SaveStatus, string> = {
-  idle: "#9ca3af",
-  saving: "#6b7280",
+  idle: "",
+  saving: "var(--text-tertiary)",
   saved: "#059669",
-  unsaved: "#9ca3af",
+  unsaved: "",
 };
 
 export function StatusBar({
@@ -40,8 +40,8 @@ export function StatusBar({
         fontSize: 11,
         border: "none",
         cursor: "pointer",
-        background: mode === value ? "#111" : "transparent",
-        color: mode === value ? "white" : "#6b7280",
+        background: mode === value ? "var(--text-primary)" : "transparent",
+        color: mode === value ? "var(--bg-primary)" : "var(--text-tertiary)",
         borderRadius: 5,
       }}
     >
@@ -56,13 +56,13 @@ export function StatusBar({
         alignItems: "center",
         justifyContent: "space-between",
         padding: "8px 20px",
-        borderTop: "1px solid #f0f0f0",
-        background: "#fafafa",
+        borderTop: "1px solid var(--border-primary)",
+        background: "var(--bg-secondary)",
         gap: 12,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ fontSize: 11, color: "#9ca3af" }}>{createdAt}</span>
+        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{createdAt}</span>
         {saveStatus !== "idle" && (
           <span style={{ fontSize: 11, color: saveColor[saveStatus] }}>
             {saveLabel[saveStatus]}
@@ -71,11 +71,10 @@ export function StatusBar({
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        {/* 模式切换 */}
         <div
           style={{
             display: "flex",
-            background: "#f3f4f6",
+            background: "var(--bg-tertiary)",
             borderRadius: 6,
             padding: 2,
             gap: 2,
@@ -86,15 +85,14 @@ export function StatusBar({
           {segBtn("off", "关闭")}
         </div>
 
-        {/* 整理模式下显示整理全文按钮 */}
         {mode === "format" && (
           <button
             onClick={onFormatAll}
             style={{
               padding: "4px 12px",
-              background: "white",
-              color: "#111",
-              border: "1px solid #e5e7eb",
+              background: "var(--bg-primary)",
+              color: "var(--text-primary)",
+              border: "1px solid var(--border-secondary)",
               borderRadius: 6,
               fontSize: 12,
               cursor: "pointer",
@@ -108,8 +106,8 @@ export function StatusBar({
           onClick={onSave}
           style={{
             padding: "4px 16px",
-            background: "#111",
-            color: "white",
+            background: "var(--text-primary)",
+            color: "var(--bg-primary)",
             borderRadius: 6,
             fontSize: 12,
             border: "none",

@@ -163,10 +163,11 @@ export function Editor({
         spellCheck={false}
         style={{
           width: "100%",
-          flex: 1,
+          height: "100%",
+          minHeight: "calc(100vh - 120px)",
           padding: "32px 48px",
-          fontSize: 14,
-          fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+          fontSize: 16,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
           lineHeight: 1.8,
           border: "none",
           outline: "none",
