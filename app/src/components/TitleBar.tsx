@@ -32,8 +32,8 @@ export function TitleBar({ aiStatus, mode, isDark, apiConfigured, onToggleDark, 
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 18 }}>📓</span>
-        <span style={{ fontWeight: 600, fontSize: 14, color: "var(--text-primary)" }}>Notebook</span>
+        <span style={{ fontSize: 16, fontWeight: 700 }}>爽</span>
+        <span style={{ fontWeight: 600, fontSize: 14, color: "var(--text-primary)" }}>Shuang</span>
         <span
           style={{
             fontSize: 12,

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "app",
-  "version": "0.1.0",
-  "identifier": "com.root.app",
+  "productName": "Shuang",
+  "version": "0.6.2",
+  "identifier": "com.shuang.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://127.0.0.1:1422",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "app",
+        "title": "Shuang",
         "width": 800,
         "height": 600
       }
