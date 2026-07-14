@@ -32,8 +32,28 @@ export function TitleBar({ aiStatus, mode, isDark, apiConfigured, onToggleDark, 
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 16, fontWeight: 700 }}>爽</span>
-        <span style={{ fontWeight: 600, fontSize: 14, color: "var(--text-primary)" }}>Shuang</span>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          background: "#8b1a1a",
+          borderRadius: 8,
+          padding: "3px 10px 3px 4px",
+        }}>
+          <span style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 20,
+            height: 20,
+            background: "rgba(255,255,255,0.15)",
+            borderRadius: 5,
+            color: "white",
+            fontSize: 12,
+            fontFamily: "'STLiti','LiSu','KaiTi',serif",
+          }}>爽</span>
+          <span style={{ fontWeight: 700, fontSize: 13, color: "white", letterSpacing: 1 }}>SHUANG</span>
+        </div>
         <span
           style={{
             fontSize: 12,
